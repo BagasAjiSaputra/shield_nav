@@ -42,7 +42,7 @@ Wajib berikan respons HANYA dalam format JSON valid tanpa format markdown:
   "text": "kalimat ucapan yang diucapkan pengguna"
 }`;
 
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${apiKey}`;
 
     const response = await fetch(geminiUrl, {
       method: "POST",
@@ -83,12 +83,16 @@ Wajib berikan respons HANYA dalam format JSON valid tanpa format markdown:
       return NextResponse.json({ text: "Suara Masuk" });
     }
 
-    let resultJson;
+    let resultJson: any;
     try {
       resultJson = JSON.parse(candidateText);
     } catch {
       const cleaned = candidateText.replace(/```json/g, "").replace(/```/g, "").trim();
       resultJson = JSON.parse(cleaned);
+    }
+
+    if (Array.isArray(resultJson) && resultJson.length > 0) {
+      resultJson = resultJson[0];
     }
 
     console.log("[SERVER /transcribe] Hasil:", resultJson);
@@ -109,3 +113,4 @@ export async function GET() {
     service: "SHIELD NAV Speech-to-Text API",
   });
 }
+

@@ -55,7 +55,7 @@ Wajib berikan respons HANYA dalam format JSON valid tanpa markdown:
   "confidence": 0.95
 }`;
 
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${apiKey}`;
 
     const response = await fetch(geminiUrl, {
       method: "POST",
@@ -102,12 +102,16 @@ Wajib berikan respons HANYA dalam format JSON valid tanpa markdown:
       });
     }
 
-    let resultJson;
+    let resultJson: any;
     try {
       resultJson = JSON.parse(candidateText);
     } catch {
       const cleaned = candidateText.replace(/```json/g, "").replace(/```/g, "").trim();
       resultJson = JSON.parse(cleaned);
+    }
+
+    if (Array.isArray(resultJson) && resultJson.length > 0) {
+      resultJson = resultJson[0];
     }
 
     console.log("[SERVER /detect_object] Hasil:", resultJson);
